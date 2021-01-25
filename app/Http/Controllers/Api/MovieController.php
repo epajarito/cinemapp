@@ -113,6 +113,6 @@ class MovieController extends Controller
     private function upload(UploadedFile $uploadedFile)
     {
         $name = time() . ".{$uploadedFile->getClientOriginalExtension()}";
-        return $uploadedFile->storeAs('movies',$name,'public');
+        return "storage/" . $uploadedFile->storeAs('movies',$name,'public');
     }
 }
