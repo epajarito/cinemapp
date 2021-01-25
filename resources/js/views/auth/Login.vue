@@ -75,7 +75,6 @@
             ...mapActions('auth',['login','logout']),
             ...mapActions('schedule',['get']),
             async onSubmit(){
-                console.log("submit...")
                 await this.login(this.form)
 
             }

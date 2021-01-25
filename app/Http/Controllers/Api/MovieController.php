@@ -3,9 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Movie\StoreRequest;
+use App\Http\Requests\Movie\UpdateRequest;
 use App\Http\Resources\MovieResource;
 use App\Models\Movie;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class MovieController extends Controller
 {
@@ -19,7 +24,7 @@ class MovieController extends Controller
      */
     public function index()
     {
-        $movies = Movie::latest()->paginate();
+        $movies = Movie::latest('updated_at')->paginate();
         return MovieResource::collection($movies);
     }
 
@@ -39,9 +44,13 @@ class MovieController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        $movie = new Movie();
+        $movie->fill($request->validated());
+        $movie->image = $this->upload($request->image);
+        $movie->save();
+        return response()->noContent();
     }
 
     /**
@@ -52,7 +61,7 @@ class MovieController extends Controller
      */
     public function show(Movie $movie)
     {
-        //
+        return new MovieResource($movie);
     }
 
     /**
@@ -73,9 +82,20 @@ class MovieController extends Controller
      * @param  \App\Models\Movie  $movie
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Movie $movie)
+    public function update(UpdateRequest $request, Movie $movie)
     {
-        //
+        if($request->has('schedules_ids')){
+            $schedules_ids = Str::of( $request->input('schedules_ids') )
+                ->explode(',')
+                ->toArray();
+
+            $movie->schedules()->sync($schedules_ids);
+            return response()->noContent();
+        }
+        $movie->fill($request->validated());
+        $movie->image = $this->upload($request->image);
+        $movie->update();
+        return response()->noContent();
     }
 
     /**
@@ -88,5 +108,11 @@ class MovieController extends Controller
     {
         $movie->markAsCancelled();
         return response()->noContent();
+    }
+
+    private function upload(UploadedFile $uploadedFile)
+    {
+        $name = time() . ".{$uploadedFile->getClientOriginalExtension()}";
+        return $uploadedFile->storeAs('movies',$name,'public');
     }
 }

@@ -1,5 +1,5 @@
 import Vue from 'vue'
-export async function get({commit},url = '/api/movies') {
+export async function get({commit},url = '/movies') {
     try{
         commit('setLoading',true,{root : true})
         let {data} = await Vue.axios({
@@ -17,14 +17,14 @@ export async function get({commit},url = '/api/movies') {
 }
 
 
-export async function show({commit},url) {
+export async function show({commit},id) {
     try{
         commit('setLoading',true,{root : true})
         let {data} = await Vue.axios({
             method : 'get',
-            url
+            url : `/movies/${id}`
         })
-        commit('campaign',data)
+        commit('movie',data)
     }catch (error) {
         if(error.response){
             commit('validateErrorResponse',error,{root : true})
@@ -36,12 +36,13 @@ export async function show({commit},url) {
 
 export async function store({commit},form) {
     try{
+        commit('setCreated',false,{root:true})
         commit('setLoading',true,{root : true})
         commit('errors', {data : {errors : {}}})
         await Vue.axios({
             method : 'post',
             data : form,
-            url : '/campaigns',
+            url : '/movies',
             headers : {
                 'content-type': 'multipart/form-data'
             }
@@ -50,7 +51,7 @@ export async function store({commit},form) {
     }catch (error) {
         if(error.response){
             commit('validateErrorResponse',error,{root : true})
-            if(error.response.status == 422) {
+            if(error.response.status === 422) {
                 if (error.response.hasOwnProperty("data")) {
                     commit('errors', {data: error.response.data})
                 }
@@ -63,11 +64,12 @@ export async function store({commit},form) {
 
 export async function update({commit}, {form,id}) {
     try{
+        commit('setUpdated',false,{root:true})
         commit('setLoading',true,{root : true})
         commit('errors', {data : {errors : {}}})
         await Vue.axios({
             method : 'post',
-            url : `/campaigns/${id}`,
+            url : `/movies/${id}`,
             data : form,
             headers : {
                 'content-type': 'multipart/form-data'
@@ -77,7 +79,7 @@ export async function update({commit}, {form,id}) {
     }catch(error){
         if(error.response){
             commit('validateErrorResponse', error, {root: true})
-            if(error.response.status == 422){
+            if(error.response.status === 422){
                 if(error.response.hasOwnProperty("data")){
                     commit('errors', {data : error.response.data})
                 }
@@ -93,7 +95,7 @@ export async function destroy({commit},id) {
         commit('setLoading',true,{root : true})
         await Vue.axios({
             method : 'delete',
-            url : `/api/movies/${id}`
+            url : `/movies/${id}`
         })
         commit('setDeleted',true,{root:true})
     }catch(error){

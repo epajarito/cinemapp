@@ -22,7 +22,7 @@ class ScheduleFactory extends Factory
     public function definition()
     {
         return [
-            'hour' => now()->addHours(rand(1, 5))->subMinutes(rand(1, 55))->format('H:i'),
+            'hour' => now()->subHours(rand(1, 5))->subMinutes(rand(1, 55))->format('H:i'),
             'user_id' => rand(1,11)
         ];
     }

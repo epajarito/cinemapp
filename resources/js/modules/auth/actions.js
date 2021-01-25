@@ -8,10 +8,9 @@ export async function login({commit},form){
         commit('setLoading',true,{root : true})
         let {data} = await Vue.axios({
             method : 'post',
-            url : '/api/login',
+            url : '/login',
             data: form
         });
-        console.log("response after login", data)
         commit('setUser',data);
         axios.defaults.headers.common['Authorization'] = `Bearer ${data.access_token}`;
         router.push('/')
@@ -23,15 +22,17 @@ export async function login({commit},form){
         }else{
             commit('authError', error.message)
         }
+    }finally {
+        commit('setLoading',false,{root : true})
     }
 }
 
 export async function logout({commit}){
     try{
         commit('setLoading',true, {root : true})
-        let {data} = await Vue.axios({
+        await Vue.axios({
             method : 'post',
-            url : '/api/logout'
+            url : '/logout'
         })
         commit('resetStore',false,{root : true})
     }catch(error){

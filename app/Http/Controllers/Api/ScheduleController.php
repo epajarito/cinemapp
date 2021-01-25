@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Schedule\StoreRequest;
+use App\Http\Requests\Schedule\UpdateRequest;
 use App\Http\Resources\ScheduleCollection;
 use App\Http\Resources\ScheduleResource;
 use App\Models\Schedule;
@@ -41,9 +43,10 @@ class ScheduleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        Schedule::create($request->validated());
+        return response()->noContent();
     }
 
     /**
@@ -54,7 +57,9 @@ class ScheduleController extends Controller
      */
     public function show(Schedule $schedule)
     {
-        //
+        $schedule->withOutDateFormat = false;
+        $schedule->withOutStatusValue = false;
+        return new ScheduleResource($schedule);
     }
 
     /**
@@ -75,9 +80,10 @@ class ScheduleController extends Controller
      * @param  \App\Models\Schedule  $schedule
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Schedule $schedule)
+    public function update(UpdateRequest $request, Schedule $schedule)
     {
-        //
+        $schedule->update($request->validated());
+        return response()->noContent();
     }
 
     /**
@@ -88,6 +94,7 @@ class ScheduleController extends Controller
      */
     public function destroy(Schedule $schedule)
     {
-        //
+        $schedule->markAsCancelled();
+        return response()->noContent();
     }
 }

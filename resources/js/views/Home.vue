@@ -12,7 +12,7 @@
                             {{ movie.attributes.created_at }}
                         </p>
                         <small class="card-link text-muted" style="color: black !important;" v-for="schedule in movie.relationships.schedules">
-                            Horario {{ schedule.hour }}
+                            Horario {{ schedule.attributes.hour }}
                         </small>
                     </div>
                 </div>

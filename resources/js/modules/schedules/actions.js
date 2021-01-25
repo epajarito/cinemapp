@@ -1,5 +1,6 @@
 import Vue from 'vue'
-export async function get({commit},url = '/api/schedules') {
+import router from "../../router";
+export async function get({commit},url = '/schedules') {
     try{
         commit('setLoading',true,{root : true})
         let {data} = await Vue.axios({
@@ -17,14 +18,14 @@ export async function get({commit},url = '/api/schedules') {
 }
 
 
-export async function show({commit},url) {
+export async function show({commit},id) {
     try{
         commit('setLoading',true,{root : true})
         let {data} = await Vue.axios({
             method : 'get',
-            url
+            url : `/schedules/${id}`
         })
-        commit('campaign',data)
+        commit('schedule',data)
     }catch (error) {
         if(error.response){
             commit('validateErrorResponse',error,{root : true})
@@ -41,10 +42,7 @@ export async function store({commit},form) {
         await Vue.axios({
             method : 'post',
             data : form,
-            url : '/campaigns',
-            headers : {
-                'content-type': 'multipart/form-data'
-            }
+            url : '/schedules',
         });
         commit('setCreated',true,{root:true})
     }catch (error) {
@@ -67,11 +65,8 @@ export async function update({commit}, {form,id}) {
         commit('errors', {data : {errors : {}}})
         await Vue.axios({
             method : 'post',
-            url : `/campaigns/${id}`,
-            data : form,
-            headers : {
-                'content-type': 'multipart/form-data'
-            }
+            url : `/schedules/${id}`,
+            data : form
         })
         commit('setUpdated',true,{root : true})
     }catch(error){
@@ -93,7 +88,7 @@ export async function destroy({commit},id) {
         commit('setLoading',true,{root : true})
         await Vue.axios({
             method : 'delete',
-            url : `/campaigns/${id}`
+            url : `/schedules/${id}`
         })
         commit('setDeleted',true,{root:true})
     }catch(error){

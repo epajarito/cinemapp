@@ -19,11 +19,19 @@ class ScheduleResource extends JsonResource
             'id' => $this->resource->getRouteKey(),
             'type' => 'schedules',
             'attributes' => [
-                'hour' => $this->resource->hour->format('H:i'),
-                'status' => $this->resource->status
+                'hour' => isset($this->resource->withOutDateFormat)
+                    ? $this->resource->hour->format('H:i')
+                    : $this->resource->hour->format('g:i A'),
+
+                'status' => isset($this->resource->withOutStatusValue)
+                    ? $this->resource->status
+                    : $this->resource->getValueStatus(),
+
+                'user_id' => $this->resource->user_id
             ],
             'relationships' => [
-                'user' => $this->resource->user
+                'user' => $this->resource->user,
+                //'movies' => MovieResource::collection($this->resource->movies)
             ],
             'links' => [
                 'self' => route('schedules.show', $this->resource)

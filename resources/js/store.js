@@ -40,6 +40,13 @@ export default createStore(Vuex.Store,{
                 router.push("/login");
                 console.log('store reseted...')
             },750)
+        },
+        validateErrorResponse(state, {response}){
+            if(response.status == 401 && (response.data.message == 'Unauthenticated.' || response.data.message == 'TOKEN_EXPIRED') ){
+                this.commit('resetStore')
+            }else if(response.status === 404){
+                router.push('/404');
+            }
         }
     },
     actions : {

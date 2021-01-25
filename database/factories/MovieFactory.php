@@ -23,8 +23,7 @@ class MovieFactory extends Factory
     {
         return [
             'name' => $this->faker->sentence,
-            'user_id' => rand(1,11),
-            'schedule_id' => rand(1,20)
+            'user_id' => rand(1,11)
         ];
     }
 }

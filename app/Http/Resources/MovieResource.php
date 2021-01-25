@@ -21,10 +21,11 @@ class MovieResource extends JsonResource
                 'name' => Str::limit( $this->resource->name , 30, '...'),
                 'status' => $this->resource->getValueStatus(),
                 'image' => env('APP_URL') .'/'. $this->resource->image,
-                'created_at' => $this->resource->created_at->format('Y-m-d H:i:s')
+                'created_at' => $this->resource->created_at->format('Y-m-d'),
+                'user_id' => $this->resource->user_id
             ],
             'relationships' => [
-                'schedules' => $this->resource->schedules,
+                'schedules' => ScheduleResource::collection( $this->resource->schedules ),
                 'user' => $this->resource->user
             ],
             'links' => [
